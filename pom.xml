@@ -116,43 +116,32 @@
                     <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <!--<dependencies>-->
-                <!--<dependency>-->
-                <!--<groupId>com.sun</groupId>-->
-                <!--<artifactId>tools</artifactId>-->
-                <!--<version>1.5.0</version>-->
-                <!--<scope>system</scope>-->
-                <!--<systemPath>${java.home}/../lib/tools.jar</systemPath>-->
-                <!--</dependency>-->
-                <!--<dependency>-->
-                <!--<groupId>ant</groupId>-->
-                <!--<artifactId>ant-apache-regexp</artifactId>-->
-                <!--<version>1.6.5</version>-->
-                <!--</dependency>-->
-                <!--</dependencies>-->
+                <version>1.8</version>
                 <dependencies>
                     <dependency>
-                        <groupId>ant-contrib</groupId>
-                        <artifactId>ant-contrib</artifactId>
-                        <version>1.0b3</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>ant</groupId>
-                                <artifactId>ant</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.ant</groupId>
-                        <artifactId>ant-nodeps</artifactId>
-                        <version>1.8.1</version>
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                        <version>1.5.0</version>
+                        <scope>system</scope>
+                        <systemPath>${java.home}/../lib/tools.jar</systemPath>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.ant</groupId>
                         <artifactId>ant-apache-regexp</artifactId>
-                        <version>1.8.1</version>
+                        <version>1.10.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -163,6 +152,7 @@
                         <phase>clean</phase>
                         <configuration>
                             <tasks>
+                                <echo message="executing clean task"/>
                                 <ant antfile="build.xml" target="clean"/>
                             </tasks>
                         </configuration>
@@ -175,6 +165,7 @@
                         <phase>compile</phase>
                         <configuration>
                             <tasks>
+                                <echo message="executing compile task"/>
                                 <ant antfile="build.xml" target="compile"/>
                             </tasks>
                         </configuration>
@@ -187,34 +178,15 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
+                                <echo message="executing dist task"/>
                                 <ant antfile="build.xml" target="dist"/>
+                                <!--<attachartifact-->
+                                        <!--file="${project.build.directory}/targ/fast-md5/target/fast-md5-2.1.7.jar"/>-->
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>add-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${project.build.directory}/ant-output.jar</file>
-                                    <type>jar</type>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

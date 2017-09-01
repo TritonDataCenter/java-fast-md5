@@ -35,6 +35,9 @@
         customize. -->
         
         <property file="build.local.properties" />
+
+        <property name="project-version" value="2.7.1"/>
+
         
         <!-- Define default settings (see above to override) -->
         
@@ -264,6 +267,8 @@
                 <include name="fast-md5/build/lib/**" />
             </zipfileset>
         </zip>
+
+        <jar destfile="${build_dir}/fast-md5-${project-version}.jar" basedir="${dist_dir}/build" />
     </target>
     
     
@@ -437,7 +442,7 @@ occurs.  A new seed will be printed at the start of each test.
         
         <replaceregexp file="${header_out}"
                        match="/[*][^/]*[*]/"
-                       replace=""
+                       replace="${line.separator}"
                        byline="false"
                        flags="sg" />
         
@@ -446,9 +451,17 @@ occurs.  A new seed will be printed at the start of each test.
         <fixcrlf file="${header_out}" eol="lf" />
         
         <!-- remove empty lines -->
-        
+
         <replaceregexp file="${header_out}"
-                       match="(^|\n)\n+"
+                       match="${line.separator}${line.separator}+"
+                       replace="${line.separator}"
+                       byline="false"
+                       flags="sg" />
+
+        <!-- remove potentially-empty first line -->
+
+        <replaceregexp file="${header_out}"
+                       match="^${line.separator}(.*)"
                        replace="\1"
                        byline="false"
                        flags="sg" />
