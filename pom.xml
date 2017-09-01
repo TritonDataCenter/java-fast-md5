@@ -159,6 +159,9 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <!--
+                    Disable native library packaging temporarily
+
                     <execution>
                         <id>antrun-package</id>
                         <phase>package</phase>
@@ -166,14 +169,13 @@
                             <tasks>
                                 <echo message="executing dist task"/>
                                 <ant antfile="build.xml" target="dist"/>
-                                <!--<attachartifact-->
-                                        <!--file="${project.build.directory}/targ/fast-md5/target/fast-md5-2.1.7.jar"/>-->
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    -->
                 </executions>
             </plugin>
         </plugins>
