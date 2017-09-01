@@ -195,21 +195,7 @@
     <target name="clean" depends="init">
         <delete dir="${build_dir}" />
     </target>
-    
-    
-    <!-- Compiles the Java source -->
-    <target name="compile" depends="init">
-        <mkdir dir="${build_dir}/build"/>
-        <javac srcdir="src"
-               destdir="${build_dir}/build"
-               target="1.1"
-               source="1.2"
-               debug="true"
-               deprecation="true"
-               optimize="true" />
-    </target>
-    
-    
+
     <!-- Creates the documentation -->
     <target name="doc" depends="init">
         <javadoc sourcepath="src" destdir="${build_dir}/javadoc" />
@@ -217,7 +203,7 @@
     
     
     <!-- Package for distribution -->
-    <target name="dist" depends="init,compile,check_libs,doc">
+    <target name="dist" depends="init,check_libs,doc">
         
         <!-- create directory to gather together files -->
         
@@ -350,37 +336,7 @@
         
         <fail unless="platform" message="Unsupported platform: name='${os.name}' arch='${os.arch}'" />
     </target>
-    
-    
-    <!-- Perpetually tests the distribution until an error occurs. -->
-    <target name="test" depends="init,compile">
-        <echo>
 
-This will continually test the distribution until an error
-occurs.  A new seed will be printed at the start of each test.
-
-        </echo>
-        <property name="test_jvmarg" value="" />
-        <property name="test_arg" value="" />
-        <java classname="com.twmacinta.util.test.MD5OutputStreamTest"
-              classpath="${build_dir}/build"
-              fork="true"
-              dir="src" >
-            <jvmarg line="${test_jvmarg}" />
-            <arg line="${test_arg}" />
-        </java>
-    </target>
-    
-    
-    <!-- Disables use of the native library and then perpetually tests
-    the distribution until an error occurs. -->
-    <target name="test_no_native" depends="init">
-        <antcall target="test">
-            <param name="test_jvmarg"
-                   value="-Dcom.twmacinta.util.MD5.NO_NATIVE_LIB=1" />
-        </antcall>
-    </target>
-    
     <!--
       ==
       ==

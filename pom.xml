@@ -104,6 +104,15 @@
         </repository>
     </repositories>
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -115,16 +124,6 @@
                     <pushChanges>false</pushChanges>
                     <releaseProfiles>release</releaseProfiles>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
@@ -154,19 +153,6 @@
                             <tasks>
                                 <echo message="executing clean task"/>
                                 <ant antfile="build.xml" target="clean"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>antrun-compile</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <tasks>
-                                <echo message="executing compile task"/>
-                                <ant antfile="build.xml" target="compile"/>
                             </tasks>
                         </configuration>
                         <goals>

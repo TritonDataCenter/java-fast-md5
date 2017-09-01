@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import com.twmacinta.io.*;
 import com.twmacinta.util.*;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Copyright (c) 2002 - 2010 by Timothy W Macinta, All Rights Reserved.<p>
@@ -33,33 +35,27 @@ import com.twmacinta.util.*;
  * @author Tim Macinta (twm@alum.mit.edu)
  **/
 
-public class MD5OutputStreamTest {
-    
-    /**
-     * Usage:
-     *
-     *   java com.twmacinta.util.test.MD5OutputStreamTest [seed | "time" [max_data]]
-     *
-     **/
-    public static void main (String arg[]) {
+public class MD5OutputStreamTest extends TestCase {
+
+    public void testMD5OutputStreamNative() {
+        testMD5OutputStream(true);
+    }
+
+    public void testMD5OutputStreamPlain() {
+        testMD5OutputStream(false);
+    }
+
+    private void testMD5OutputStream(final boolean loadNativeLibrary) {
         try {
-        
+
             // determine random seed
-        
+
             long seed = System.currentTimeMillis();
-            if (arg.length > 0) {
-                if (!arg[0].equals("time")) {
-                    seed = Long.parseLong(arg[0]);
-                }
-            }
-        
+
             // determine maximum size of data
-        
-            long max_data = (20L * (1 << 30)); // max 20 gigabytes
-            if (arg.length > 1) {
-                max_data = Long.parseLong(arg[1]);
-            }
-            
+
+            long max_data = 1 << 20; // max 1 megabyte
+
             // report relevant system info
 
             String[] propNames = {"os.name", "os.arch"};
@@ -68,17 +64,21 @@ public class MD5OutputStreamTest {
                 System.out.print(": ");
                 System.out.println(System.getProperty(propNames[i]));
             }
-            
+
             // report whether native library is used
-            
-            if (MD5.initNativeLibrary()) {
-                System.out.println("Successfully loaded native library");
+
+            if (loadNativeLibrary) {
+                if (MD5.initNativeLibrary()) {
+                    System.out.println("Successfully loaded native library");
+                } else {
+                    Assert.fail("Native library requested but not found");
+                }
             } else {
                 System.out.println("WARNING: Native library NOT loaded");
             }
-            
+
             // determine name of binary
-            
+
             String md5Binary = null;
             String[] toTry = {"md5sum", "md5"};
             for (int nameIndex = 0; nameIndex < toTry.length; nameIndex++) {
@@ -92,11 +92,12 @@ public class MD5OutputStreamTest {
                 } catch (Exception e) {}
             }
             if (md5Binary == null) throw new Exception("No md5sum binary or alternative found");
-            
+
             // repeatedly perform tests
-        
+
             Random ran = new Random(seed);
-            while (true) {
+            int iterations = 10;
+            while (0 < --iterations) {
                 System.out.print("seed:  "+seed+"  \t");
                 long data_size = ran.nextLong();
                 if (data_size < 0) data_size = -data_size;
@@ -114,12 +115,12 @@ public class MD5OutputStreamTest {
             e.printStackTrace();
         }
     }
-    
+
     private static void runTest (long data_size, Random ran, String md5Binary) throws IOException {
         Process proc = Runtime.getRuntime().exec(md5Binary);
         MD5OutputStream out1 = new MD5OutputStream(new NullOutputStream());
         OutputStream out2 = new BufferedOutputStream(proc.getOutputStream());
-    
+
         while (data_size > 0) {
 
             int output_type = ran.nextInt() % 100;
@@ -190,7 +191,7 @@ public class MD5OutputStreamTest {
         if (off < 0) off = -off;
         off = off % b_len;
         if (off == b_len) return 0;
-    
+
         int len = ran.nextInt();
         if (len < 0) len = -len;
         len = len % (b_len - off);
