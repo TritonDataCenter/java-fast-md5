@@ -1,0 +1,618 @@
+<!--
+
+    Copyright (c) 2010 by Timothy W Macinta, All Rights Reserved.
+
+    This file can be used to compile and package the Fast MD5
+    distribution.
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    See http://www.twmacinta.com/myjava/fast_md5.php for more
+    information on this package.
+
+    @author Tim Macinta (twm@alum.mit.edu)
+
+-->
+<project name="FastMD5" default="dist" basedir=".">
+    
+    <!-- Initialize project-wide settings -->
+    <target name="init">
+        
+        <!-- Load custom settings.  To customize your build, create a
+        file with this name and add the properties you wish to
+        customize. -->
+        
+        <property file="build.local.properties" />
+        
+        <!-- Define default settings (see above to override) -->
+        
+        <property name="build_dir" location="targ" />
+        <dirname property="jdk_home" file="${java.home}" />
+        <property name="mingw64_gcc" location="C:/MinGW/mingw64/bin/x86_64-w64-mingw32-gcc.exe" />
+        <property name="mingw64_strip" location="C:/MinGW/mingw64/bin/x86_64-w64-mingw32-strip.exe" />
+        
+        <!-- Enforce minimum Ant version -->
+        
+        <property name="min_ant_version" value="1.5.2" />
+        <condition property="ant_version_ok">
+            <or>
+                <contains string="${ant.version}" substring=" version 1.5.2" />
+                <contains string="${ant.version}" substring=" version 1.5.3" />
+                <contains string="${ant.version}" substring=" version 1.5.4" />
+                <contains string="${ant.version}" substring=" version 1.6" />
+            </or>
+        </condition>
+        <antcall target="_check_ant_version" />
+        
+        <!-- detect darwin_ppc -->
+        
+        <condition property="platform_darwin_ppc">
+            <os family="mac" arch="ppc" />
+        </condition>
+        <condition property="platform" value="darwin_ppc">
+            <isset property="platform_darwin_ppc" />
+        </condition>
+        <condition property="platform_darwin">
+            <isset property="platform_darwin_ppc" />
+        </condition>
+        
+        <!-- detect darwin_x86 -->
+        
+        <condition property="platform_darwin_x86">
+            <or>
+                <os family="mac" arch="x86" />
+                <os family="mac" arch="i386" />
+                <os family="mac" arch="i486" />
+                <os family="mac" arch="i586" />
+                <os family="mac" arch="i686" />
+            </or>
+        </condition>
+        <condition property="platform" value="darwin_x86">
+            <isset property="platform_darwin_x86" />
+        </condition>
+        <condition property="platform_darwin">
+            <isset property="platform_darwin_x86" />
+        </condition>
+        
+        <!-- detect darwin_x86_64 -->
+        
+        <condition property="platform_darwin_x86_64">
+            <os family="mac" arch="x86_64" />
+        </condition>
+        <condition property="platform" value="darwin_x86_64">
+            <isset property="platform_darwin_x86_64" />
+        </condition>
+        <condition property="platform_darwin">
+            <isset property="platform_darwin_x86_64" />
+        </condition>
+        
+        <!-- detect linux_x86 -->
+        
+        <condition property="platform_linux_x86">
+            <or>
+                <os name="Linux" arch="x86" />
+                <os name="Linux" arch="i386" />
+                <os name="Linux" arch="i486" />
+                <os name="Linux" arch="i586" />
+                <os name="Linux" arch="i686" />
+            </or>
+        </condition>
+        <condition property="platform" value="linux_x86">
+            <isset property="platform_linux_x86" />
+        </condition>
+        <condition property="platform_linux">
+            <isset property="platform_linux_x86" />
+        </condition>
+        
+        <!-- detect linux_amd64 -->
+        
+        <condition property="platform_linux_amd64">
+            <os name="Linux" arch="amd64" />
+        </condition>
+        <condition property="platform" value="linux_amd64">
+            <isset property="platform_linux_amd64" />
+        </condition>
+        <condition property="platform_linux">
+            <isset property="platform_linux_amd64" />
+        </condition>
+        
+        <!-- detect freebsd_x86 -->
+        
+        <condition property="platform_freebsd_x86">
+            <or>
+                <os name="freebsd" arch="x86" />
+                <os name="freebsd" arch="i386" />
+                <os name="freebsd" arch="i486" />
+                <os name="freebsd" arch="i586" />
+                <os name="freebsd" arch="i686" />
+            </or>
+        </condition>
+        <condition property="platform" value="freebsd_x86">
+            <isset property="platform_freebsd_x86" />
+        </condition>
+        <condition property="platform_freebsd">
+            <isset property="platform_freebsd_x86" />
+        </condition>
+        
+        <!-- detect freebsd_amd64 -->
+        
+        <condition property="platform_freebsd_amd64">
+            <os name="freebsd" arch="amd64" />
+        </condition>
+        <condition property="platform" value="freebsd_amd64">
+            <isset property="platform_freebsd_amd64" />
+        </condition>
+        <condition property="platform_freebsd">
+            <isset property="platform_freebsd_amd64" />
+        </condition>
+        
+        <!-- detect win32_x86 -->
+        
+        <condition property="platform_win32_x86">
+            <or>
+                <os family="windows" arch="x86" />
+                <os family="windows" arch="i386" />
+                <os family="windows" arch="i486" />
+                <os family="windows" arch="i586" />
+                <os family="windows" arch="i686" />
+            </or>
+        </condition>
+        <condition property="platform" value="win32_x86">
+            <isset property="platform_win32_x86" />
+        </condition>
+        
+        <!-- detect win_amd64 -->
+        
+        <condition property="platform_win_amd64">
+            <os family="windows" arch="amd64" />
+        </condition>
+        <condition property="platform" value="win_amd64">
+            <isset property="platform_win_amd64" />
+        </condition>
+        
+        <!-- report detected platform -->
+        
+        <echo message="Current platform: ${platform}" />
+    </target>
+    
+    
+    <!-- Deletes build directory -->
+    <target name="clean" depends="init">
+        <delete dir="${build_dir}" />
+    </target>
+    
+    
+    <!-- Compiles the Java source -->
+    <target name="compile" depends="init">
+        <mkdir dir="${build_dir}/build"/>
+        <javac srcdir="src"
+               destdir="${build_dir}/build"
+               target="1.1"
+               source="1.2"
+               debug="true"
+               deprecation="true"
+               optimize="true" />
+    </target>
+    
+    
+    <!-- Creates the documentation -->
+    <target name="doc" depends="init">
+        <javadoc sourcepath="src" destdir="${build_dir}/javadoc" />
+    </target>
+    
+    
+    <!-- Package for distribution -->
+    <target name="dist" depends="init,compile,check_libs,doc">
+        
+        <!-- create directory to gather together files -->
+        
+        <property name="dist_dir" location="${build_dir}/fast-md5"/>
+        <delete dir="${dist_dir}"/>
+        <mkdir dir="${dist_dir}"/>
+        
+        <!-- copy files to the official directory structure -->
+        
+        <copy todir="${dist_dir}">
+            <fileset dir=".">
+                <exclude name="targ/**" />
+                <exclude name="build.local.properties" />
+            </fileset>
+        </copy>
+        <copy todir="${dist_dir}">
+            <fileset dir="${build_dir}">
+                <include name="build/**" />
+                <include name="javadoc/**" />
+            </fileset>
+        </copy>
+        <copy todir="${dist_dir}/build">
+            <fileset dir="${dist_dir}/src">
+                <include name="lib/**" />
+                <exclude name="lib/**/MD5.c" />
+                <exclude name="lib/**/MD5.h" />
+            </fileset>
+        </copy>
+        <delete file="${build_dir}/fast-md5.zip"/>
+        
+        <!-- create zip file with executable bit set for libraries -->
+        
+        <zip destfile="${build_dir}/fast-md5.zip">
+            <zipfileset dir="${build_dir}">
+                <include name="fast-md5/**" />
+                <exclude name="fast-md5/src/lib/**" />
+                <exclude name="fast-md5/build/lib/**" />
+            </zipfileset>
+            <zipfileset dir="${build_dir}">
+                <include name="fast-md5/src/lib/**/MD5.c" />
+                <include name="fast-md5/src/lib/**/MD5.h" />
+            </zipfileset>
+            <zipfileset dir="${build_dir}" filemode="755">
+                <include name="fast-md5/src/lib/**" />
+                <exclude name="fast-md5/src/lib/**/MD5.c" />
+                <exclude name="fast-md5/src/lib/**/MD5.h" />
+                <include name="fast-md5/build/lib/**" />
+            </zipfileset>
+        </zip>
+    </target>
+    
+    
+    <!-- Checks that the native libraries are up to date. -->
+    <target name="check_libs" depends="init,_header">
+        <antcall target="_check_lib">
+            <param name="arch" value="darwin_ppc" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="darwin_x86" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="darwin_x86_64" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="linux_x86" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="linux_amd64" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="freebsd_x86" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="freebsd_amd64" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="win32_x86" />
+        </antcall>
+        <antcall target="_check_lib">
+            <param name="arch" value="win_amd64" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Compiles the native library for the current platform and
+    copies it to the appropriate, architecture dependant directory
+    beneath "src/lib/".  Along with the native library, the source
+    files used to compile it are also copied to the same architecture
+    dependant directory so that there is a record of what source the
+    native library is valid for.  This record is used later to confirm
+    that each native library is up to date with the latest source,
+    since the usual practice of recompiling everything from scratch
+    cannot be easily applied to native libraries from other platforms.
+    The record may also be manually updated if changes in the source
+    would not require recompilation (e.g., if comments change).
+    
+    As a consequence of this strategy, native libraries are not
+    deleted by the "clean" target and are not rebuilt by the "dist"
+    target.  This "update_lib" target is how they are updated.  When
+    the source code affecting the native library changes, the
+    "update_lib" target should be run on each platform that is
+    supported.  Then, the contents of the newly udpated architecture
+    dependant directory (e.g., "src/lib/arch/darwin_x86/") from each
+    platform should be copied to whatever machine is to be used to
+    run the "dist" target to create a distribution. -->
+    <target name="update_lib" depends="init,_header">
+        
+        <!-- warn if build process has not yet been test on this platform -->
+        
+        <condition property="platform_update_lib_untested">
+            <or>
+                <isset property="platform_darwin_ppc" />
+                <isset property="platform_linux_x86" />
+            </or>
+        </condition>
+        <antcall target="_warn_platform_update_lib_untested" />
+        
+        <!-- build -->
+        
+        <copy file="src/com/twmacinta/util/MD5.c" todir="${build_dir}/lib" />
+        <antcall target="_update_lib_darwin" />
+        <antcall target="_update_lib_linux" />
+        <antcall target="_update_lib_freebsd" />
+        <antcall target="_update_lib_win32_x86" />
+        <antcall target="_update_lib_win_amd64" />
+        
+        <!-- print error if no platform matched -->
+        
+        <fail unless="platform" message="Unsupported platform: name='${os.name}' arch='${os.arch}'" />
+    </target>
+    
+    
+    <!-- Perpetually tests the distribution until an error occurs. -->
+    <target name="test" depends="init,compile">
+        <echo>
+
+This will continually test the distribution until an error
+occurs.  A new seed will be printed at the start of each test.
+
+        </echo>
+        <property name="test_jvmarg" value="" />
+        <property name="test_arg" value="" />
+        <java classname="com.twmacinta.util.test.MD5OutputStreamTest"
+              classpath="${build_dir}/build"
+              fork="true"
+              dir="src" >
+            <jvmarg line="${test_jvmarg}" />
+            <arg line="${test_arg}" />
+        </java>
+    </target>
+    
+    
+    <!-- Disables use of the native library and then perpetually tests
+    the distribution until an error occurs. -->
+    <target name="test_no_native" depends="init">
+        <antcall target="test">
+            <param name="test_jvmarg"
+                   value="-Dcom.twmacinta.util.MD5.NO_NATIVE_LIB=1" />
+        </antcall>
+    </target>
+    
+    <!--
+      ==
+      ==
+      ==  End user callable targets
+      ==
+      ================================================================
+      ================================================================
+      ==
+      ==  Begin internal targets
+      ==
+      -->
+    
+    <!-- Internal target to check for a minimum Ant version.  This is
+    its own target so that it can be skipped when the version of Ant
+    is recent enough to be acceptable but not recent enough to support
+    the "AntVersion" task, which was introduced in Ant 1.7. -->
+    <target name="_check_ant_version" unless="ant_version_ok">
+        <antversion atleast="${min_ant_version}" property="ant_version_ok" />
+        <fail unless="ant_version_ok" message="Ant ${min_ant_version} or higher required" />
+    </target>
+    
+    
+    <!-- Generate header and C stub file plus normalized version -->
+    <target name="_header" depends="compile">
+        <uptodate property="header_uptodate" targetfile="${build_dir}/lib/MD5.h">
+            <srcfiles file="src/com/twmacinta/util/MD5.c" />
+            <srcfiles file="src/com/twmacinta/util/MD5.java" />
+            <srcfiles file="${build_dir}/build/com/twmacinta/util/MD5.class" />
+        </uptodate>
+        <antcall target="_header_if_needed" />
+    </target>
+    <target name="_header_if_needed" unless="header_uptodate">
+        <mkdir dir="${build_dir}/lib" />
+        <javah class="com.twmacinta.util.MD5"
+               outputFile="${build_dir}/lib/MD5.h"
+               classpath="${build_dir}/build"
+               force="true" />
+        <antcall target="_normalize_header">
+            <param name="header_in" value="${build_dir}/lib/MD5.h" />
+            <param name="header_out" value="${build_dir}/lib/MD5_norm.h" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Normalize the given C header file so that comments and empty
+    lines are removed and line endings are made the same.  The manner
+    in which this is done is hardly foolproof or even thorough, it's
+    just meant to handle the simple MD5.h files generated by javah so
+    that they can be compared across platforms.  This is because the
+    comments can differ by platform, but the actual code has been the
+    same (at least so far). -->
+    <target name="_normalize_header">
+        
+        <!-- copy file -->
+        
+        <copy file="${header_in}" tofile="${header_out}" overwrite="true" />
+        
+        <!-- strip comments -->
+        
+        <replaceregexp file="${header_out}"
+                       match="/[*][^/]*[*]/"
+                       replace=""
+                       byline="false"
+                       flags="sg" />
+        
+        <!-- make all line endings the same -->
+        
+        <fixcrlf file="${header_out}" eol="lf" />
+        
+        <!-- remove empty lines -->
+        
+        <replaceregexp file="${header_out}"
+                       match="(^|\n)\n+"
+                       replace="\1"
+                       byline="false"
+                       flags="sg" />
+    </target>
+    
+    
+    <!-- Checks that the library for the given architecture to make
+    sure it does not need to be updated. -->
+    <target name="_check_lib">
+        <property name="check_dir"
+                  location="${build_dir}/lib_check/arch/${arch}" />
+        <mkdir dir="${check_dir}" />
+        <antcall target="_normalize_header">
+            <param name="header_in" value="src/lib/arch/${arch}/MD5.h" />
+            <param name="header_out" value="${check_dir}/MD5_norm.h" />
+        </antcall>
+        <condition property="changed" value="MD5.h">
+            <not>
+                <filesmatch file1="${build_dir}/lib/MD5_norm.h"
+                            file2="${check_dir}/MD5_norm.h" />
+            </not>
+        </condition>
+        <condition property="changed" value="MD5.c">
+            <not>
+                <filesmatch file1="src/com/twmacinta/util/MD5.c"
+                            file2="src/lib/arch/${arch}/MD5.c" />
+            </not>
+        </condition>
+        <fail if="changed" message="The library for ${arch} may be out of date because the file ${changed} has changed since it was built.  Please see the documentation at the top of the 'update_lib' target in 'build.xml' for details on bringing the library up to date." />
+    </target>
+    
+    
+    <!-- Build and update native library for Mac OS X -->
+    <target name="_update_lib_darwin" if="platform_darwin">
+        <exec executable="gcc" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-O3" />
+            <arg value="-bundle" />
+            <arg value="-I" />
+            <arg value="/System/Library/Frameworks/JavaVM.framework/Headers" />
+            <arg value="-o" />
+            <arg value="MD5.jnilib" />
+            <arg value="-framework" />
+            <arg value="JavaVM" />
+            <arg value="MD5.c" />
+        </exec>
+        <antcall target="_update_lib">
+            <param name="lib_file" value="MD5.jnilib" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Build and update native library for Linux -->
+    <target name="_update_lib_linux" if="platform_linux">
+        <exec executable="gcc" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-O3" />
+            <arg value="-shared" />
+            <arg value="-I${jdk_home}/include" />
+            <arg value="-I${jdk_home}/include/linux" />
+            <arg value="MD5.c" />
+            <arg value="-o" />
+            <arg value="MD5.so" />
+        </exec>
+        <antcall target="_update_lib">
+            <param name="lib_file" value="MD5.so" />
+        </antcall>
+    </target>
+    
+    <!-- Build and update native library for freebsd -->
+    <target name="_update_lib_freebsd" if="platform_freebsd">
+        <exec executable="gcc" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-O3" />
+            <arg value="-shared" />
+            <arg value="-fPIC" />
+            <arg value="-I${jdk_home}/include" />
+            <arg value="-I${jdk_home}/include/freebsd" />
+            <arg value="MD5.c" />
+            <arg value="-o" />
+            <arg value="MD5.so" />
+        </exec>
+        <antcall target="_update_lib">
+            <param name="lib_file" value="MD5.so" />
+        </antcall>
+    </target>
+    
+    <!-- Build and update native library for Windows 32 bit -->
+    <target name="_update_lib_win32_x86" if="platform_win32_x86">
+        <exec executable="gcc-3" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-O3" />
+            <arg value="-c" />
+            <arg value="-I${jdk_home}include" />
+            <arg value="-I${jdk_home}include\win32" />
+            <arg value="MD5.c" />
+        </exec>
+        <exec executable="gcc-3" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-shared" />
+            <arg value="-mno-cygwin" />
+            <arg value="-o" />
+            <arg value="MD5.dll" />
+            <arg value="MD5.o" />
+        </exec>
+        <antcall target="_update_lib">
+            <param name="lib_file" value="MD5.dll" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Build and update native library for Windows 64 bit -->
+    <target name="_update_lib_win_amd64" if="platform_win_amd64">
+        <exec executable="${mingw64_gcc}" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-m64" />
+            <arg value="-O3" />
+            <arg value="-c" />
+            <arg value="-I${jdk_home}\include" />
+            <arg value="-I${jdk_home}\include\win32" />
+            <arg value="MD5.c" />
+        </exec>
+        <exec executable="${mingw64_gcc}" dir="${build_dir}/lib" failonerror="true">
+            <arg value="-m64" />
+            <arg value="-shared" />
+            <arg value="-o" />
+            <arg value="MD5.dll" />
+            <arg value="MD5.o" />
+        </exec>
+        <exec executable="${mingw64_strip}" dir="${build_dir}/lib" failonerror="true">
+            <arg value="MD5.dll" />
+        </exec>
+        <antcall target="_update_lib">
+            <param name="lib_file" value="MD5.dll" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Update native library after it has been built in a platform
+    specific manner. -->
+    <target name="_update_lib">
+        <copy todir="src/lib/arch/${platform}" overwrite="true">
+            <fileset file="${build_dir}/lib/MD5.h" />
+            <fileset file="${build_dir}/lib/MD5.c" />
+            <fileset file="${build_dir}/lib/${lib_file}" />
+        </copy>
+        <echo>
+
+WARNING: the native library was only updated for the platform
+${platform}.  Other platforms may need to be rebuilt too.
+Please see the documentation above the "update_lib" target in
+"build.xml" for details on how to update all native libraries for
+the distribution.
+
+        </echo>
+    </target>
+    
+    
+    <!-- Warn if the "update_lib" target has not been tested yet. -->
+    <target name="_warn_platform_update_lib_untested"
+            if="platform_update_lib_untested">
+        <echo>
+
+WARNING: native library compilation using this Ant build file has
+not yet been tested for the platform ${platform}.  The native
+library distributed with the official release was compiled before
+Ant was in use.
+
+        </echo>
+        <input>Press Return key to continue...</input>
+    </target>
+    
+</project>

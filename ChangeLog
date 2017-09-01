@@ -1,0 +1,56 @@
+Changes in 2.7.1:
+	- Added native method support for freebsd_x86 and freebsd_amd64.
+	- Greatly reduced size of DLL for win_amd64.
+	- Enhanced MD5OutputStreamTest to work with the 'md5' binary when
+	  the 'md5sum' binary is not found.
+Changes in 2.7:
+	- Added native method support for darwin_x86_64, linux_amd64 and
+	  win_amd64.
+	- Enhanced initNativeLibrary() to report whether native library
+	  support has been successfully loaded.
+	- Recover gracefully if native library is found but fails to load
+	  due to an UnsatisfiedLinkError.
+	- Javadoc documentation is now included with the distribution.
+	- Created a new Ant build file from scratch to automate all
+	  aspects of the compilation, building, testing, and packaging
+	  process, including native method compilation.
+	- Improved test script to report detected architecture and status
+	  of native library loading.
+Changes in 2.6.2:
+	- Fixed stack overflow bug which occurred in native method when
+	  called with a large buffer.  All users which update the hash's
+	  state using large buffers are encouraged to upgrade in order to
+	  guard against crashes and potential security implications.
+	- Added native method support for OS X on x86 hardware.
+Changes in 2.6.1:
+	- Martin West contributed a bug fix and some code refactoring to
+	  make all targets work out of the box in the Ant build file.
+	  Previously, the "dist" target did not work if the "docs"
+	  directory was not present.
+Changes in 2.6:
+	- Added OS X support for native method.
+	- Eked a little more speed out of the native method version by
+	  special-casing little endian architectures and skipping
+	  operations that would be redundant on them.
+	- Added the ability to access the MD5 instance held by an
+	  MD5InputStream or MD5OutputStream.  The primary motivation here
+	  was so that you can reset the MD5 instance mid-stream and thereby
+	  checksum blocks of a stream (this was to enable more efficient
+	  error correction in Magic Mirror Backup).
+	- Fixed incorrect documentation describing how to bypass test for
+	  native methods.
+	- Added Linux Makefile to distribution.
+	- Added Ant build file to distribution.
+	- Restructured directories to be Ant-friendly.
+	- Fixed some typos.
+Changes in 2.5:
+	- Added an optional native method for hash calculation for
+	  additional speed improvement.
+	- Cleaned up the code a little to make it friendlier to Javadoc.
+Changes in 2.1:
+	- Added a note to Update(String) explaining that the results of the
+	  method may vary across platforms.  Thanks to Peter Speck for
+	  pointing this out.
+	- Added an overloaded version of the Update() method which takes
+	  as parameters both a String and a character encoding for
+	  converting the String to a byte array.
