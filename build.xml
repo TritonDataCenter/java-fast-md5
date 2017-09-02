@@ -189,8 +189,8 @@
         
         <echo message="Current platform: ${platform}" />
     </target>
-    
-    
+
+
     <!-- Deletes build directory -->
     <target name="clean" depends="init">
         <delete dir="${build_dir}" />
@@ -198,10 +198,10 @@
 
     <!-- Creates the documentation -->
     <target name="doc" depends="init">
-        <javadoc sourcepath="src" destdir="${build_dir}/javadoc" />
+        <javadoc sourcepath="src/main/java" destdir="${build_dir}/javadoc" />
     </target>
-    
-    
+
+
     <!-- Package for distribution -->
     <target name="dist" depends="init,check_libs,doc">
         
@@ -253,11 +253,9 @@
                 <include name="fast-md5/build/lib/**" />
             </zipfileset>
         </zip>
-
-        <jar destfile="${build_dir}/fast-md5-${project-version}.jar" basedir="${dist_dir}/build" />
     </target>
-    
-    
+
+
     <!-- Checks that the native libraries are up to date. -->
     <target name="check_libs" depends="init,_header">
         <antcall target="_check_lib">
@@ -288,8 +286,8 @@
             <param name="arch" value="win_amd64" />
         </antcall>
     </target>
-    
-    
+
+
     <!-- Compiles the native library for the current platform and
     copies it to the appropriate, architecture dependant directory
     beneath "src/lib/".  Along with the native library, the source
@@ -325,7 +323,7 @@
         
         <!-- build -->
         
-        <copy file="src/com/twmacinta/util/MD5.c" todir="${build_dir}/lib" />
+        <copy file="src/main/java/com/twmacinta/util/MD5.c" todir="${build_dir}/lib" />
         <antcall target="_update_lib_darwin" />
         <antcall target="_update_lib_linux" />
         <antcall target="_update_lib_freebsd" />
@@ -357,30 +355,30 @@
         <antversion atleast="${min_ant_version}" property="ant_version_ok" />
         <fail unless="ant_version_ok" message="Ant ${min_ant_version} or higher required" />
     </target>
-    
-    
+
     <!-- Generate header and C stub file plus normalized version -->
-    <target name="_header" depends="compile">
+    <target name="_header">
         <uptodate property="header_uptodate" targetfile="${build_dir}/lib/MD5.h">
-            <srcfiles file="src/com/twmacinta/util/MD5.c" />
-            <srcfiles file="src/com/twmacinta/util/MD5.java" />
-            <srcfiles file="${build_dir}/build/com/twmacinta/util/MD5.class" />
+            <srcfiles file="src/main/c/MD5.c" />
+            <srcfiles file="src/main/java/com/twmacinta/util/MD5.java" />
+            <srcfiles file="target/classes/com/twmacinta/util/MD5.class" />
         </uptodate>
+        <echo message="finish debug" />
         <antcall target="_header_if_needed" />
     </target>
     <target name="_header_if_needed" unless="header_uptodate">
         <mkdir dir="${build_dir}/lib" />
         <javah class="com.twmacinta.util.MD5"
                outputFile="${build_dir}/lib/MD5.h"
-               classpath="${build_dir}/build"
+               classpath="target/classes"
                force="true" />
         <antcall target="_normalize_header">
             <param name="header_in" value="${build_dir}/lib/MD5.h" />
             <param name="header_out" value="${build_dir}/lib/MD5_norm.h" />
         </antcall>
     </target>
-    
-    
+
+
     <!-- Normalize the given C header file so that comments and empty
     lines are removed and line endings are made the same.  The manner
     in which this is done is hardly foolproof or even thorough, it's
@@ -422,8 +420,8 @@
                        byline="false"
                        flags="sg" />
     </target>
-    
-    
+
+
     <!-- Checks that the library for the given architecture to make
     sure it does not need to be updated. -->
     <target name="_check_lib">
@@ -431,7 +429,7 @@
                   location="${build_dir}/lib_check/arch/${arch}" />
         <mkdir dir="${check_dir}" />
         <antcall target="_normalize_header">
-            <param name="header_in" value="src/lib/arch/${arch}/MD5.h" />
+            <param name="header_in" value="lib/arch/${arch}/MD5.h" />
             <param name="header_out" value="${check_dir}/MD5_norm.h" />
         </antcall>
         <condition property="changed" value="MD5.h">
@@ -442,14 +440,14 @@
         </condition>
         <condition property="changed" value="MD5.c">
             <not>
-                <filesmatch file1="src/com/twmacinta/util/MD5.c"
+                <filesmatch file1="src/main/MD5.c"
                             file2="src/lib/arch/${arch}/MD5.c" />
             </not>
         </condition>
         <fail if="changed" message="The library for ${arch} may be out of date because the file ${changed} has changed since it was built.  Please see the documentation at the top of the 'update_lib' target in 'build.xml' for details on bringing the library up to date." />
     </target>
-    
-    
+
+
     <!-- Build and update native library for Mac OS X -->
     <target name="_update_lib_darwin" if="platform_darwin">
         <exec executable="gcc" dir="${build_dir}/lib" failonerror="true">
@@ -467,8 +465,8 @@
             <param name="lib_file" value="MD5.jnilib" />
         </antcall>
     </target>
-    
-    
+
+
     <!-- Build and update native library for Linux -->
     <target name="_update_lib_linux" if="platform_linux">
         <exec executable="gcc" dir="${build_dir}/lib" failonerror="true">
@@ -522,8 +520,8 @@
             <param name="lib_file" value="MD5.dll" />
         </antcall>
     </target>
-    
-    
+
+
     <!-- Build and update native library for Windows 64 bit -->
     <target name="_update_lib_win_amd64" if="platform_win_amd64">
         <exec executable="${mingw64_gcc}" dir="${build_dir}/lib" failonerror="true">
@@ -548,8 +546,8 @@
             <param name="lib_file" value="MD5.dll" />
         </antcall>
     </target>
-    
-    
+
+
     <!-- Update native library after it has been built in a platform
     specific manner. -->
     <target name="_update_lib">
@@ -568,8 +566,8 @@ the distribution.
 
         </echo>
     </target>
-    
-    
+
+
     <!-- Warn if the "update_lib" target has not been tested yet. -->
     <target name="_warn_platform_update_lib_untested"
             if="platform_update_lib_untested">
