@@ -1,4 +1,4 @@
-package com.twmacinta.io;
+package com.joyent.io;
 
 import java.io.*;
 

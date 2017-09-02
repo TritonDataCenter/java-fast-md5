@@ -1,9 +1,9 @@
-package com.twmacinta.util.test;
+package com.joyent.util.test;
 
 import java.io.*;
 import java.util.*;
-import com.twmacinta.io.*;
-import com.twmacinta.util.*;
+import com.joyent.io.*;
+import com.joyent.util.*;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 

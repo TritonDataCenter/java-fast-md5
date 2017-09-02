@@ -1,4 +1,4 @@
-package com.twmacinta.util;
+package com.joyent.util;
 
 import java.io.*;
 
@@ -140,7 +140,7 @@ public class MD5InputStream extends FilterInputStream {
 	while ((num_read = in.read(buf)) != -1) {
 	  digest.update(buf, 0, num_read);
 	}
-	System.out.println(MD5.asHex(digest.digest())+"  "+filename);
+	System.out.println(com.joyent.util.MD5.asHex(digest.digest())+"  "+filename);
 	in.close();
 
 	// Use the optimized MD5 implementation
@@ -150,14 +150,14 @@ public class MD5InputStream extends FilterInputStream {
 	//    disable the native library search, if requested
 
 	if (!use_native_lib) {
-	  MD5.initNativeLibrary(true);
+	  com.joyent.util.MD5.initNativeLibrary(true);
 	}
 
 	//    calculate the checksum
 
 	MD5InputStream in = new MD5InputStream(new BufferedInputStream(new FileInputStream(filename)));
 	while ((num_read = in.read(buf)) != -1);
-	System.out.println(MD5.asHex(in.hash())+"  "+filename);
+	System.out.println(com.joyent.util.MD5.asHex(in.hash())+"  "+filename);
 	in.close();
       }
     } catch (Exception e) {

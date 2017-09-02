@@ -1,4 +1,4 @@
-package com.twmacinta.util;
+package com.joyent.util;
 
 import java.io.*;
 
@@ -95,7 +95,7 @@ public class MD5OutputStream extends FilterOutputStream {
    **/
   public static void main(String[] arg) {
     try {
-      MD5OutputStream out = new MD5OutputStream(new com.twmacinta.io.NullOutputStream());
+      MD5OutputStream out = new MD5OutputStream(new com.joyent.io.NullOutputStream());
       InputStream in = new BufferedInputStream(new FileInputStream(arg[0]));
       byte[] buf = new byte[65536];
       int num_read;

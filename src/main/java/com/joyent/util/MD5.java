@@ -1,4 +1,4 @@
-package com.twmacinta.util;
+package com.joyent.util;
 
 import java.io.File;
 import java.io.FileInputStream;
