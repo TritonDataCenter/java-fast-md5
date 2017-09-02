@@ -37,12 +37,12 @@ import junit.framework.TestCase;
 
 public class MD5OutputStreamTest extends TestCase {
 
-    public void testMD5OutputStreamNative() {
-        testMD5OutputStream(true);
-    }
-
     public void testMD5OutputStreamPlain() {
         testMD5OutputStream(false);
+    }
+
+    public void testMD5OutputStreamNative() {
+        testMD5OutputStream(true);
     }
 
     private void testMD5OutputStream(final boolean loadNativeLibrary) {
