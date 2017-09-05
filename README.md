@@ -24,7 +24,7 @@ Please note: classes are defined under the `com.twmacinta.util` package
 despite the differing group ID. This is required to maintain binary
 compatibility with native library files distributed at the original project page.
 
-### Native Lirary
+### Native library
 
 Set the `com.twmacinta.util.MD5.NATIVE_LIB_FILE` system property to the
 absolute path of your architecture's compiled library file (`.jnilib` or `.so`).
@@ -37,7 +37,7 @@ to prevent loading of native library files. This takes precedence over `NATIVE_L
 ### Native library autodiscovery
 
 When neither the `NATIVE_LIB_FILE` nor `NO_NATIVE_LIB` properties are set
-The following paths will be checked automatically:
+the following paths will be checked automatically:
 
 - `${CWD}/lib/arch/${OS}_${ARCH}/MD5.${EXT}`
 - `${CWD}/lib/MD5.${EXT}`
