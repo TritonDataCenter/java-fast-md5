@@ -290,7 +290,7 @@
 
     <!-- Compiles the native library for the current platform and
     copies it to the appropriate, architecture dependant directory
-    beneath "lib/".  Along with the native library, the source
+    beneath "src/lib/".  Along with the native library, the source
     files used to compile it are also copied to the same architecture
     dependant directory so that there is a record of what source the
     native library is valid for.  This record is used later to confirm
@@ -323,7 +323,7 @@
         
         <!-- build -->
         
-        <copy file="src/main/c/MD5.c" todir="${build_dir}/lib" />
+        <copy file="src/main/java/com/joyent/util/MD5.c" todir="${build_dir}/lib" />
         <antcall target="_update_lib_darwin" />
         <antcall target="_update_lib_linux" />
         <antcall target="_update_lib_freebsd" />
@@ -439,8 +439,8 @@
         </condition>
         <condition property="changed" value="MD5.c">
             <not>
-                <filesmatch file1="src/main/c/MD5.c"
-                            file2="lib/arch/${arch}/MD5.c" />
+                <filesmatch file1="src/main/MD5.c"
+                            file2="src/lib/arch/${arch}/MD5.c" />
             </not>
         </condition>
         <fail if="changed" message="The library for ${arch} may be out of date because the file ${changed} has changed since it was built.  Please see the documentation at the top of the 'update_lib' target in 'build.xml' for details on bringing the library up to date." />
@@ -550,7 +550,7 @@
     <!-- Update native library after it has been built in a platform
     specific manner. -->
     <target name="_update_lib">
-        <copy todir="lib/arch/${platform}" overwrite="true">
+        <copy todir="src/lib/arch/${platform}" overwrite="true">
             <fileset file="${build_dir}/lib/MD5.h" />
             <fileset file="${build_dir}/lib/MD5.c" />
             <fileset file="${build_dir}/lib/${lib_file}" />

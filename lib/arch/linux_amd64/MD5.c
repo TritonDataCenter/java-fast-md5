@@ -68,7 +68,7 @@
 #define ROTATE_LEFT_UINT32(i, shift_left) (((i) << (shift_left)) | ((i) >> (32 - (shift_left))))
 
 JNIEXPORT void JNICALL
-Java_com_joyent_util_MD5_Transform_1native
+Java_com_twmacinta_util_MD5_Transform_1native
 (JNIEnv *env, jobject obj, jintArray state, jbyteArray buffer, jint shift, jint length) {
   register uint32_t a;
   register uint32_t b;
