@@ -323,7 +323,7 @@
         
         <!-- build -->
         
-        <copy file="src/main/java/com/joyent/util/MD5.c" todir="${build_dir}/lib" />
+        <copy file="src/main/java/com/twmacinta/util/MD5.c" todir="${build_dir}/lib" />
         <antcall target="_update_lib_darwin" />
         <antcall target="_update_lib_linux" />
         <antcall target="_update_lib_freebsd" />
@@ -360,14 +360,14 @@
     <target name="_header">
         <uptodate property="header_uptodate" targetfile="${build_dir}/lib/MD5.h">
             <srcfiles file="src/main/c/MD5.c" />
-            <srcfiles file="src/main/java/com/joyent/util/MD5.java" />
-            <srcfiles file="target/classes/com/joyent/util/MD5.class" />
+            <srcfiles file="src/main/java/com/twmacinta/util/MD5.java" />
+            <srcfiles file="target/classes/com/twmacinta/util/MD5.class" />
         </uptodate>
         <antcall target="_header_if_needed" />
     </target>
     <target name="_header_if_needed" unless="header_uptodate">
         <mkdir dir="${build_dir}/lib" />
-        <javah class="com.joyent.util.MD5"
+        <javah class="com.twmacinta.util.MD5"
                outputFile="${build_dir}/lib/MD5.h"
                classpath="target/classes"
                force="true" />
