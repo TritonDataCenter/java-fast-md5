@@ -94,10 +94,9 @@ import java.io.InputStream;
  * com.twmacinta.util.MD5.initNativeLibrary(true) before any MD5 objects
  * are constructed.
  *
- * @author Santeri Paavolainen <sjpaavol@cc.helsinki.fi>
+ * @author Santeri Paavolainen {@literal <sjpaavol@cc.helsinki.fi> }
  * @author Timothy W Macinta (twm@alum.mit.edu) (optimizations and bug fixes)
  */
-
 public class MD5 {
     
     /**
@@ -488,12 +487,22 @@ public class MD5 {
      */
     
     /**
-     * Plain update, updates this object
+     * Update internal state from buffer.
+     *
+     * @param buffer the bytes to process
+     * @param offset starting offset to read from buffer
+     * @param length number of bytes to read from buffer
      **/
     public void Update (byte buffer[], int offset, int length) {
         Update(this.state, buffer, offset, length);
     }
-    
+
+    /**
+     * Update internal state from buffer.
+     *
+     * @param buffer the bytes to process
+     * @param length number of bytes to read from buffer
+     */
     public void Update (byte buffer[], int length) {
         Update(this.state, buffer, 0, length);
     }
@@ -557,10 +566,10 @@ public class MD5 {
     }
     
     /**
-     * Update buffer with a single integer (only & 0xff part is used,
+     * Update buffer with a single integer (only {@literal & 0xff} part is used,
      * as a byte)
      *
-     * @param i Integer value, which is then converted to byte as i & 0xff
+     * @param i Integer value, which is then converted to byte as {@literal i & 0xff}
      **/
     public void Update (int i) {
         Update((byte) (i & 0xff));
@@ -646,6 +655,8 @@ public class MD5 {
     
     /**
      * Convenience method for initNativeLibrary(false).
+     *
+     * @return true iff native library support has been loaded
      **/
     public static synchronized final boolean initNativeLibrary () {
         return initNativeLibrary(false);
@@ -657,6 +668,8 @@ public class MD5 {
      * library should not be loaded now or in the future.  If native
      * library support has been previously loaded or disabled, this
      * method has no effect.
+     *
+     * @param disallow_lib_loading cancel loading of native library
      *
      * @return true iff native library support has been loaded
      **/
@@ -856,6 +869,11 @@ public class MD5 {
     
     /**
      * Calculates and returns the hash of the contents of the given file.
+     *
+     * @param f input file to hash
+     *
+     * @return MD5 bytes
+     * @throws IOException if there was an error reading the file
      **/
     public static byte[] getHash (File f) throws IOException {
         if (!f.exists()) throw new FileNotFoundException(f.toString());
@@ -877,6 +895,11 @@ public class MD5 {
     }
     
     /**
+     * Compares byte arrays for equality.
+     *
+     * @param hash1 first byte buffer to compare
+     * @param hash2 second byte buffer to compare
+     *
      * @return true iff the first 16 bytes of both hash1 and hash2 are
      *         equal;  both hash1 and hash2 are null; or either hash
      *         array is less than 16 bytes in length and their lengths and

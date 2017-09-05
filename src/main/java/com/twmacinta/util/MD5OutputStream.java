@@ -2,7 +2,7 @@ package com.twmacinta.util;
 
 import java.io.*;
 
-/** 
+/**
  * MD5OutputStream is a subclass of FilterOutputStream adding MD5
  * hashing of the output.
  * <p>
@@ -32,10 +32,9 @@ import java.io.*;
  * was not the the original author of the code, although I did
  * optimize it (substantially) and fix some bugs.
  *
- * @author	Santeri Paavolainen <santtu@cs.hut.fi>
+ * @author	Santeri Paavolainen {@literal <santtu@cs.hut.fi> }
  * @author	Timothy W Macinta (twm@alum.mit.edu) (added main() method)
  **/
-
 public class MD5OutputStream extends FilterOutputStream {
     /**
      * MD5 context
@@ -54,7 +53,7 @@ public class MD5OutputStream extends FilterOutputStream {
     }
 
     /**
-     * Writes a byte. 
+     * Writes a byte.
      *
      * @see java.io.FilterOutputStream
      */
@@ -78,6 +77,8 @@ public class MD5OutputStream extends FilterOutputStream {
     /**
      * Returns array of bytes representing hash of the stream as finalized
      * for the current state.
+     *
+     * @return the finalized MD5 bytes
      * @see MD5#Final
      */
 

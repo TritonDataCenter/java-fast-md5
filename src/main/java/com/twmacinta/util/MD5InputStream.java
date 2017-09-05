@@ -32,11 +32,9 @@ import java.io.*;
  * was not the the original author of the code, although I did
  * optimize it (substantially) and fix some bugs.
  *
- * @author	Santeri Paavolainen <santtu@cs.hut.fi>
+ * @author	Santeri Paavolainen {@literal <santtu@cs.hut.fi> }
  * @author	Timothy W Macinta (twm@alum.mit.edu) (added main() method)
  **/
-
-
 public class MD5InputStream extends FilterInputStream {
   /**
    * MD5 context
@@ -90,7 +88,9 @@ public class MD5InputStream extends FilterInputStream {
 
   /**
    * Returns array of bytes representing hash of the stream as
-   * finalized for the current state. 
+   * finalized for the current state.
+   *
+   * @return the finalized MD5 bytes
    * @see MD5#Final
    */
   public byte[] hash () {
